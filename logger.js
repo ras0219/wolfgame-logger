@@ -1,10 +1,10 @@
 // Objective: Parse out individual wolfgames and record all sayings
 // and actions in a manipulable format
 var irc = require('irc');
-var settings = require('configuration');
+var settings = require('./configuration');
 
 var client = new irc.Client('irc.freenode.net', settings.nickname, {
-    channels: [],
+    channels: []
 });
 
 var game = {
@@ -12,7 +12,7 @@ var game = {
     log: [],
 
     start: function () { this.status = true; this.log = []; },
-    print: function() { return 'log\n' + this.log.join('\n'); },
+    print: function() { return 'log\n' + this.log.join('\n'); }
 }
 
 client.on('message#wolfgame', function (from, message) {
@@ -72,7 +72,7 @@ client.once('notice#NickServ', function () {
 
 /** General Purpose Debugging **/
 client.on('raw', function (msg) {
-    console.log(msg.prefix + ' => ' + msg.command + ':', msg.args); 
+    console.log(msg.prefix + ' => ' + msg.command + ':', msg.args);
 });
 client.on('error', function(message) {
     console.log('error: ', message);
