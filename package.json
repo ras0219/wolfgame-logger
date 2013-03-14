@@ -4,7 +4,9 @@
     "author": "ras0219",
     "dependencies": {
         "irc": "*",
-        "underscore": "*"
+        "underscore": "*",
+        "mongodb": "*",
+        "nodules": "*"
     },
     "license": "MIT"
 }

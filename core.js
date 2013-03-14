@@ -8,15 +8,16 @@
 // delete require.cache['/home/shimin/test2.js']
 
 var repl = require('repl');
-var core = require('./core');
 var settings = require('./configuration');
+var HRClient = require('./hotreloadclient');
 
-var WolfClient = require('./wolfclient');
-var client = new WolfClient(settings);
-
+var client = new HRClient(settings);
 client.on('error', function(message) {
     console.log('error: ', message);
 });
+
+// Load modules
+client.loadModule('./wolfmodule');
 
 // Long term Repl
 var shellrepl = repl.start({
