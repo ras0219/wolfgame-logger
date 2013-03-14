@@ -18,11 +18,12 @@ function WolfModule(client) {
         }
         if (this.game !== undefined) {
             this.game.recvmsg(from, message);
-        }
-        if (from == 'pywolf') {
-            if (message.search('The seer was ') > -1) {
-                this.client.emit('gameover', this.game);
-                this.game = undefined;
+
+            if (from == 'pywolf') {
+                if (message.search('The seer was ') > -1) {
+                    this.client.emit('gameover', this.game);
+                    this.game = undefined;
+                }
             }
         }
     });
@@ -36,12 +37,13 @@ function WolfModule(client) {
 
     // On gameover, log the game
     this.on('gameover', function (game) {
-        console.log(game.log);
         if (this.client.config.owner)
             this.client.say(this.client.config.owner,
                      'Game finished. Logged '
                      + game.log.length
                      + ' messages.');
+        console.log('players', game.players);
+        console.log('roles', game.roles);
     });
 }
 

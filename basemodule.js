@@ -16,5 +16,8 @@ util.inherits(BaseModule, EventEmitter);
 BaseModule.prototype.say = function () {
     this.client.say.apply(this.client, arguments);
 };
+BaseModule.prototype.notice = function () {
+    this.client.notice.apply(this.client, arguments);
+};
 
 module.exports = BaseModule;
