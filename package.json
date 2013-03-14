@@ -3,7 +3,8 @@
     "version": "0.0.1",
     "author": "ras0219",
     "dependencies": {
-        "irc": "*"
+        "irc": "*",
+        "underscore": "*"
     },
     "license": "MIT"
 }
