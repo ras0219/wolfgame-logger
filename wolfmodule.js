@@ -2,14 +2,12 @@
 // author: ras0219
 
 var util = require('util');
-var EventEmitter = require('events').EventEmitter;
+var BaseModule = require('./basemodule');
 var Game = require('./game');
 
 function WolfModule(client) {
     // Call superconstructor
-    WolfModule.super_.call(this);
-
-    this.client = client;
+    WolfModule.super_.call(this, client);
 
     // Listen to master pywolf
     this.on('message#wolfgame', function (from, message) {
@@ -40,13 +38,13 @@ function WolfModule(client) {
     this.on('gameover', function (game) {
         console.log(game.log);
         if (this.client.config.owner)
-            this.say(this.client.config.owner,
+            this.client.say(this.client.config.owner,
                      'Game finished. Logged '
                      + game.log.length
                      + ' messages.');
     });
 }
 
-util.inherits(WolfModule, EventEmitter);
+util.inherits(WolfModule, BaseModule);
 
 module.exports = WolfModule;
