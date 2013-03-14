@@ -1,0 +1,9 @@
+{
+    "name": "wolfgame-logger",
+    "version": "0.0.1",
+    "author": "ras0219",
+    "dependencies": {
+        "irc": "*"
+    },
+    "license": "MIT"
+}
