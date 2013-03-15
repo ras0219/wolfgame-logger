@@ -18,7 +18,7 @@ BaseModule.prototype.withSafety = function (f) {
         try {
             f.apply(this, arguments);
         } catch (error) {
-            this.emit('error', error);
+            this.client.emit('error', error);
         }
     };
 };
