@@ -66,7 +66,7 @@ Game.prototype.onEndingMsg = function (msg) {
 // msg - sentence containing a role assignment (period is stripped)
 Game.prototype.processRoleMsg = function (msg) {
     // Remove special formatting
-    msg = msg.replace('\u0002','');
+    msg = msg.replace(/\u0002/g,'');
 
     prefixes = {
         'The wolves were ': function (suffix) {
