@@ -17,18 +17,22 @@ function OwnerModule(client) {
 
     // On identify, connect to wolfgame
     this.once('identified', function () {
-        this.client.say(this.config.owner, 'Initialized.');
+        this.say(this.config.owner, 'Initialized.');
     });
 
     // Listen to owner
-    this.on('pm#' + this.config.owner, function (text,msg) {
-        if (msg.substring(0,4) == 'eval') {
+    this.on('pm#' + this.config.owner, function (text) {
+        if (text.substring(0,5) == 'eval ') {
             try {
-                var e = eval(msg.substring(5));
+                var e = eval(text.substring(5));
                 this.say(this.config.owner, e.toString());
             } catch (error) {
                 this.say(this.config.owner, "Caught error: " + error);
             }
+        } else if (text == 'quit') {
+            this.say(this.config.owner, 'quitting');
+            this.disconnect();
+            process.exit(0);
         }
     });
 }

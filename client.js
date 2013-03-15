@@ -49,16 +49,6 @@ function Client(config) {
             }
         });
     });
-
-    // Listen for quit
-    if (config.owner !== undefined)
-        this.on('pm#' + config.owner, function (text, msg) {
-            if (text == 'quit') {
-                this.say(config.owner, 'quitting');
-                this.disconnect();
-                process.exit(0);
-            }
-        });
 }
 
 // Add inheritance
