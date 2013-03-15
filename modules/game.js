@@ -13,7 +13,11 @@ function Game() {
 }
 
 Game.prototype.recvmsg = function (from, message) {
-    this.log[this.log.length] = { from: from, message: message };
+    this.log[this.log.length] = {
+        from: from,
+        message: message,
+        time: new Date()
+    };
 
     if (from == 'pywolf')
         this.onGameMsg(message);

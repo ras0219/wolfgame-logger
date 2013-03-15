@@ -13,6 +13,15 @@ function BaseModule(client) {
 }
 util.inherits(BaseModule, EventEmitter);
 
+BaseModule.prototype.withSafety = function (f) {
+    return function () {
+        try {
+            f.apply(this, arguments);
+        } catch (error) {
+            this.emit('error', error);
+        }
+    };
+};
 BaseModule.prototype.say = function () {
     this.client.say.apply(this.client, arguments);
 };

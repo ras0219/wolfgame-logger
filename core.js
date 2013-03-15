@@ -9,13 +9,17 @@ var settings = require('./configuration');
 var HRClient = require('./hotreloadclient');
 
 var client = new HRClient(settings);
+
 client.on('error', function(message) {
-    console.log('error: ', message);
+    console.log('\n**********');
+    console.log('Error: ');
+    console.log(message);
+    console.log('**********');
 });
 
 // Load modules
-client.loadModule('modules/wolfmodule');
-client.loadModule('modules/ownermodule');
+client.loadModule('./modules/wolfmodule');
+client.loadModule('./modules/ownermodule');
 
 // Long term Repl
 var shellrepl = repl.start({

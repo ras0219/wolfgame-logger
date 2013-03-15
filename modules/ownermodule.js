@@ -21,20 +21,24 @@ function OwnerModule(client) {
     });
 
     // Listen to owner
-    this.on('pm#' + this.config.owner, function (text) {
-        if (text.substring(0,5) == 'eval ') {
-            try {
-                var e = eval(text.substring(5));
-                this.say(this.config.owner, e.toString());
-            } catch (error) {
-                this.say(this.config.owner, "Caught error: " + error);
-            }
-        } else if (text == 'quit') {
-            this.say(this.config.owner, 'quitting');
-            this.disconnect();
-            process.exit(0);
-        }
-    });
+    this.on('pm#' + this.config.owner,
+            this.withSafety(function (text) {
+                if (text.substring(0,5) == 'eval ') {
+                    try {
+                        var e = eval(text.substring(5));
+                        if (e === undefined)
+                            this.say(this.config.owner, 'undefined');
+                        else
+                            this.say(this.config.owner, e.toString());
+                    } catch (error) {
+                        this.say(this.config.owner, "Caught error: " + error);
+                    }
+                } else if (text == 'quit') {
+                    this.say(this.config.owner, 'quitting');
+                    this.client.disconnect();
+                    process.exit(0);
+                }
+            }));
 }
 
 util.inherits(OwnerModule, BaseModule);
