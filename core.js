@@ -4,9 +4,6 @@
 // Objective: Parse out individual wolfgames and record all sayings
 // and actions in a manipulable format
 
-// FOR FUTURE USE
-// delete require.cache['/home/shimin/test2.js']
-
 var repl = require('repl');
 var settings = require('./configuration');
 var HRClient = require('./hotreloadclient');
@@ -18,6 +15,7 @@ client.on('error', function(message) {
 
 // Load modules
 client.loadModule('./wolfmodule');
+client.loadModule('./ownermodule');
 
 // Long term Repl
 var shellrepl = repl.start({

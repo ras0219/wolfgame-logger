@@ -1,5 +1,6 @@
 // hotreloadclient.js
 // author: ras0219
+
 // Recaching adapted from stack overflow:
 // http://stackoverflow.com/questions/9210542/node-js-require-cache-possible-to-invalidate
 
@@ -54,18 +55,6 @@ function HotReloadClient(config) {
                                            arguments);
         oldemit.apply(this, arguments);
     };
-
-    if (this.config.owner)
-        this.addListener('pm#' + this.config.owner, function (msg) {
-            if (msg.substring(0,4) == 'eval') {
-                try {
-                    var e = eval(msg.substring(5));
-                    this.say(this.config.owner, e.toString());
-                } catch (error) {
-                    this.say(this.config.owner, "Caught error: " + error);
-                }
-            }
-        });
 }
 util.inherits(HotReloadClient, Client);
 

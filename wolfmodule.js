@@ -28,13 +28,6 @@ function WolfModule(client) {
         }
     });
 
-    // On identify, connect to wolfgame
-    this.once('identified', function () {
-        if (this.client.config.owner)
-            this.client.say(this.client.config.owner, 'Initialized.');
-        //this.join('#wolfgame');
-    });
-
     // On gameover, log the game
     this.on('gameover', function (game) {
         if (this.client.config.owner)
