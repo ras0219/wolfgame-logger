@@ -19,6 +19,8 @@ Game.prototype.recvmsg = function (from, message) {
         this.onGameMsg(message);
 };
 
+
+// Executed when a message is received from pywolf
 Game.prototype.onGameMsg = function (msg) {
     var i = msg.search(': Welcome to Werewolf');
     if (i > -1) { this.onWelcomeMsg(msg.substring(0,i)); }
@@ -27,12 +29,19 @@ Game.prototype.onGameMsg = function (msg) {
     if (i > -1) { this.onEndingMsg(msg); }
 };
 
+// Executed when the start game message is received.
+//
+// msg - list of players participating as a string
 Game.prototype.onWelcomeMsg = function (msg) {
     var players = msg.split(", ");
     this.players = players;
     return;
 };
 
+// Executed when the end game message is received.  This message
+// describes every player's role.
+//
+// msg - list of role assignments as a string
 Game.prototype.onEndingMsg = function (msg) {
     // Split open messages
     var rolemsgs = msg.split(". ");
@@ -48,6 +57,9 @@ Game.prototype.onEndingMsg = function (msg) {
     return;
 };
 
+// Executed to process each role statement.
+//
+// msg - sentence containing a role assignment (period is stripped)
 Game.prototype.processRoleMsg = function (msg) {
     // Remove special formatting
     msg = msg.replace('\u0002','');
@@ -82,7 +94,8 @@ Game.prototype.processRoleMsg = function (msg) {
         if (msg.substring(0, k.length) == k)
             return prefixes[k].call(this, msg.substring(k.length));
     }
+    // Was unable to process the given message
+    return undefined;
 };
-
 
 module.exports = Game;
