@@ -11,6 +11,8 @@ function OwnerModule(client) {
     // Call superconstructor
     OwnerModule.super_.call(this, client);
 
+    var unlocked = false;
+
     // Require owner
     if (this.config.owner === undefined)
         throw new Error("OwnerModule requires an owner");
@@ -20,10 +22,26 @@ function OwnerModule(client) {
         this.say(this.config.owner, 'Initialized.');
     });
 
+    this.on('message#', this.withSafety(function (from, to, text) {
+        if (from == this.config.owner) {
+            if (text.substring(0,6) == '.eval ' && unlocked) {
+                try {
+                    var e = eval(text.substring(6));
+                    if (e === undefined)
+                        this.say(to, 'undefined');
+                    else
+                        this.say(to, e.toString());
+                } catch (error) {
+                    this.say(to, "Caught error: " + error);
+                }
+            }
+        }
+    }));
+
     // Listen to owner
     this.on('pm#' + this.config.owner,
             this.withSafety(function (text) {
-                if (text.substring(0,5) == 'eval ') {
+                if (text.substring(0,5) == 'eval ' && unlocked) {
                     try {
                         var e = eval(text.substring(5));
                         if (e === undefined)
