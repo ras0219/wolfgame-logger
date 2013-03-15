@@ -37,6 +37,6 @@ function OwnerModule(client) {
     });
 }
 
-util.inherits(WolfModule, BaseModule);
+util.inherits(OwnerModule, BaseModule);
 
-module.exports = WolfModule;
+module.exports = OwnerModule;
