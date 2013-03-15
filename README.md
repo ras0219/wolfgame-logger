@@ -25,3 +25,21 @@ The actual modules which process information are loaded into the
 HotReloadClient (e.g. `client.loadModule('./wolfmodule');`).  The code
 can be updated while the bot is connected and reloaded using
 HotReloadClient.reloadModule(modulename).
+
+Database Backend
+----------------
+The application is currently configured to use a MongoDB backend, with
+document schemas as follows:
+
+    {
+        _id : <id>,
+        players : [ 'player1', 'player2', ... ],
+        roles : { 'player1' : 'wolf', 'player2' : 'drunk', ... },
+        log : [
+            { from : 'player1',
+              message : 'I think player2 is wolf',
+              time : <ISODate object>
+            },
+            ...
+        ]
+    }
