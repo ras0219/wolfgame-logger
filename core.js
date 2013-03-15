@@ -14,8 +14,8 @@ client.on('error', function(message) {
 });
 
 // Load modules
-client.loadModule('./wolfmodule');
-client.loadModule('./ownermodule');
+client.loadModule('modules/wolfmodule');
+client.loadModule('modules/ownermodule');
 
 // Long term Repl
 var shellrepl = repl.start({
