@@ -121,6 +121,8 @@ WolfModule.prototype.cmd = function (from, reply, cmdmsg) {
 
     if (cmds.length == 1 && cmds[0] == 'lastgame') {
         this.cmdLastgame(from, reply);
+    } else if (cmds.length == 1 && cmds[0] == 'highscore') {
+        this.cmdWinRate(from, reply);
     } else if (cmds[0] == 'mapreduce') {
         this.cmdMapreduce(from, reply, cmdmsg.substring(10));
     } else {
@@ -128,6 +130,69 @@ WolfModule.prototype.cmd = function (from, reply, cmdmsg) {
         return;
     }
     this.floodProtection = new Date();
+};
+
+// Calculate high score list
+// Credit for original query goes to woffle
+// Improvements by ras0219
+WolfModule.prototype.cmdWinRate = function (from, reply) {
+    if (this.client.dbwolfgame === undefined) {
+        this.client.say(reply, error_db_inaccessible + ' [0001]');
+        return;
+    }
+    var self = this;
+    var map = function () {
+        for (var pi in this.players) {
+            var p = this.players[pi];
+            var side;
+            if (this.roles.wolf.indexOf(p) > -1
+                || (this.roles.traitor !== undefined
+                    && this.roles.traitor.indexOf(p) > -1)) {
+                // If player is a wolf or traitor
+                side = 'wolves';
+            } else {
+                side = 'village';
+            }
+            var won = side == this.win ? 1 : 0;
+            emit(p, { count: 1, won: won, rate: won});
+        }
+    };
+    var reduce = function (k,v) {
+        var r = { count: 0, won: 0 };
+        for (var i in v) {
+            r.count += v[i].count;
+            r.won += v[i].won;
+        }
+        r.rate = r.won / r.count;
+        return r;
+    };
+    var opts = {out: {inline:1}};
+    this.client.dbwolfgame.mapReduce(map, reduce, opts, this.withSafety(
+        function (err, res) {
+            if (err) {
+                self.client.notice(from, err + ' [0002]');
+                return;
+            } else if (!res || res.length == 0) {
+                self.client.notice(from, error_no_results + ' [0003]');
+                return;
+            }
+            res.sort(function(a,b){return a.value.rate < b.value.rate;});
+            var msg = [];
+            for (var r in res) {
+                if (res[r].value.count >= 10) {
+                    msg[msg.length] = res[r]._id + ' ['
+                        + (res[r].value.rate*100).toFixed(1) + '% of '
+                        + res[r].value.count + ']';
+                }
+                if (msg.length > 5)
+                    break;
+            }
+            if (msg.length > 0)
+                self.client.notice(from, 'High Scores: ' + msg.join(', '));
+            else
+                self.client.notice(from, 'Sorry, the high score list is empty.');
+        }
+    ));
 };
 
 WolfModule.prototype.cmdMapreduce = function (from, reply, command) {
