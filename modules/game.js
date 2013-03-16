@@ -10,19 +10,41 @@ function Game() {
     this.log = [];
     this.players = [];
     this.roles = {};
+    this.version = 1;
 }
 
-Game.prototype.recvmsg = function (from, message) {
+// Copy constructor (kindof)
+Game.prototype.copy = function (game) {
+    // Objective here is to rebuild a latest-version game object from
+    // arbitrarily old data.
+
+    this.copylog(game.log);
+};
+// Copy constructor (kindof)
+Game.prototype.copylog = function (gamelog) {
+    // Objective here is to rebuild a latest-version game object from
+    // arbitrarily old data.
+
+    for (var i in gamelog) {
+        this.recvmsg(gamelog[i].from,
+                     gamelog[i].message,
+                     gamelog[i].time);
+    }
+};
+
+// Executed when a message is received during a game.
+Game.prototype.recvmsg = function (from, message, time) {
+    time = time !== undefined ? time : new Date();
+
     this.log[this.log.length] = {
         from: from,
         message: message,
-        time: new Date()
+        time: time
     };
 
     if (from == 'pywolf')
         this.onGameMsg(message);
 };
-
 
 // Executed when a message is received from pywolf
 Game.prototype.onGameMsg = function (msg) {
@@ -31,6 +53,16 @@ Game.prototype.onGameMsg = function (msg) {
 
     i = msg.search('The seer was ');
     if (i > -1) { this.onEndingMsg(msg); }
+
+    var winmsg = 'Game over! All the wolves are dead!';
+    if (msg.substring(0, winmsg.length) == winmsg) {
+        this.win = 'village';
+    }
+
+    var wolfmsg1 = 'Game over! There are the same number';
+    if (msg.substring(0, wolfmsg1.length) == wolfmsg1) {
+        this.win = 'wolves';
+    }
 };
 
 // Executed when the start game message is received.
@@ -76,30 +108,34 @@ Game.prototype.processRoleMsg = function (msg) {
                 return w.split(', ');
             }));
 
-            for (var k in wolves) {
-                this.roles[k] = "wolf";
-            }
+            this.roles['wolf'] = wolves;
         }
     };
     function autoprefix(p, n2) {
         n2 = n2 || p;
         prefixes['The '+p+' was '] = function (s) {
-            this.roles[s] = n2;
+            this.roles[n2] = [s];
         };
     }
     autoprefix('wolf');
     autoprefix('seer');
-    autoprefix('village drunk', 'drunk');
+    autoprefix('village drunk');
+    autoprefix('gunner');
+    autoprefix('detective');
+    autoprefix('cursed villager');
+    autoprefix('guardian angel');
     autoprefix('seer');
     autoprefix('harlot');
     autoprefix('traitor');
 
     for (var k in prefixes) {
-        if (msg.substring(0, k.length) == k)
-            return prefixes[k].call(this, msg.substring(k.length));
+        if (msg.substring(0, k.length) == k) {
+            prefixes[k].call(this, msg.substring(k.length));
+            return;
+        }
     }
     // Was unable to process the given message
-    return undefined;
+
 };
 
 module.exports = Game;
