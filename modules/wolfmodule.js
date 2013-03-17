@@ -126,7 +126,7 @@ WolfModule.prototype.cmd = function (from, reply, cmdmsg) {
     } else if (cmds[0] == 'mapreduce') {
         this.cmdMapreduce(from, reply, cmdmsg.substring(10));
     } else {
-        this.client.say(reply, from + ': Sorry, that\'s not a command I understand.');
+        this.client.notice(from, 'Sorry, that\'s not a command I understand.');
         return;
     }
     this.floodProtection = new Date();
