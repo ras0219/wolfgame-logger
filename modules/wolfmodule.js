@@ -125,6 +125,8 @@ WolfModule.prototype.cmd = function (from, reply, cmdmsg) {
         this.cmdWinRate(from, reply);
     } else if (cmds[0] == 'mapreduce') {
         this.cmdMapreduce(from, reply, cmdmsg.substring(10));
+    } else if (cmds[0] == 'sizewin') {
+        this.cmdWinsPerSize(from, reply);
     } else {
         this.client.notice(from, 'Sorry, that\'s not a command I understand.');
         return;
@@ -191,6 +193,55 @@ WolfModule.prototype.cmdWinRate = function (from, reply) {
                 self.client.notice(from, 'High Scores: ' + msg.join(', '));
             else
                 self.client.notice(from, 'Sorry, the high score list is empty.');
+        }
+    ));
+};
+
+WolfModule.prototype.cmdWinsPerSize = function (from, reply) {
+    if (this.client.dbwolfgame === undefined) {
+        this.client.say(reply, error_db_inaccessible + ' [0001]');
+        return;
+    }
+    var self = this;
+    var map = function () {
+        v = {count: 1, wolves: 0, village: 0};
+        v[this.win] = 1;
+        v.rate = v.village;
+        emit(this.players.length, v);
+        emit('all', v);
+    };
+    var reduce = function (k, v) {
+        count = {count: 0, wolves: 0, village: 0};
+        for (i in v) {
+            count.count += v[i].count;
+            count.wolves += v[i].wolves;
+            count.village += v[i].village;
+        }
+        count.rate = count.village / count.count;
+        return count;
+    };
+
+    opts = { out: {inline:1} };
+    this.client.dbwolfgame.mapReduce(map, reduce, opts, this.withSafety(
+        function (err, res) {
+            if (err) {
+                self.client.notice(from, err + ' [0003]');
+                return;
+            } else if (!res || res.length == 0) {
+                self.client.notice(from, error_no_results + ' [0004]');
+                return;
+            }
+            /* res.sort(function(a,b){return a.value.rate < b.value.rate;}); */
+            var msg = [];
+            for (var r in res) {
+                msg[msg.length] = res[r]._id + ' ['
+                    + (res[r].value.rate*100).toFixed(1) + '% of '
+                    + res[r].value.count + ']';
+            }
+            if (msg.length > 0)
+                self.client.notice(from, 'Win Rates: ' + msg.join(', '));
+            else
+                self.client.notice(from, 'Sorry, the win rates list was empty. [0005]');
         }
     ));
 };
