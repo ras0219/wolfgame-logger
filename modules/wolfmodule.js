@@ -127,11 +127,21 @@ WolfModule.prototype.cmd = function (from, reply, cmdmsg) {
         this.cmdMapreduce(from, reply, cmdmsg.substring(10));
     } else if (cmds[0] == 'sizewin') {
         this.cmdWinsPerSize(from, reply);
+    } else if (cmds[0] == 'help') {
+        this.cmdHelp(from, reply);
     } else {
         this.client.notice(from, 'Sorry, that\'s not a command I understand.');
         return;
     }
     this.floodProtection = new Date();
+};
+
+WolfModule.prototype.cmdHelp = function (from, reply) {
+    this.client.notice(from, 'This is ras0219\'s Wolfgame Statistics bot.' +
+                       ' The most recent sourcecode is available on github: ' +
+                       'https://github.com/ras0219/wolfgame-logger');
+    this.client.notice(from, 'Commands: ~sizewin, ~lastgame, ~highscore, ' +
+                       '~mapreduce <json query>');
 };
 
 // Calculate high score list
